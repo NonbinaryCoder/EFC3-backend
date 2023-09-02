@@ -1,14 +1,22 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use std::ops::Not;
+
+pub mod card;
+pub mod question;
+
+/// A side of a flashcard.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Side {
+    Front,
+    Back,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Not for Side {
+    type Output = Self;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn not(self) -> Self::Output {
+        match self {
+            Side::Front => Side::Back,
+            Side::Back => Side::Front,
+        }
     }
 }
