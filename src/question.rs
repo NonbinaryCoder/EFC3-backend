@@ -59,10 +59,10 @@ impl<'a> Question<'a> {
     pub fn is_correct_answer(&self, answer: &str) -> bool {
         match self.ty {
             QuestionTy::Flashcard { index, side, .. } => self.cards.flashcards[index][side]
-                .matches_text(&self.cards.properties.text_matching, answer),
+                .matches_text(&self.cards.properties.matching_rules, answer),
             QuestionTy::McCard { index } => self.cards.mc_cards[index]
                 .answer
-                .matches_text(&self.cards.properties.text_matching, answer),
+                .matches_text(&self.cards.properties.matching_rules, answer),
         }
     }
 
@@ -92,7 +92,7 @@ impl<'a> Question<'a> {
                     let Some(text) = self.cards.flashcards[random_index][side].any_text(rng) else {
                         continue;
                     };
-                    if answer_side.matches_text(&self.cards.properties.text_matching, text)
+                    if answer_side.matches_text(&self.cards.properties.matching_rules, text)
                         || list.contains(&text)
                     {
                         continue;
@@ -247,7 +247,7 @@ impl Set {
 mod tests {
     use rand::SeedableRng;
 
-    use crate::card::{SetProperties, TextMatching};
+    use crate::card::{MatchingRules, SetProperties};
 
     use super::*;
 
@@ -408,7 +408,7 @@ mod tests {
     #[test]
     fn match_text_with_caps() {
         let set = Set::example(SetProperties {
-            text_matching: TextMatching {
+            matching_rules: MatchingRules {
                 ignore_caps: false,
                 ..Default::default()
             },
